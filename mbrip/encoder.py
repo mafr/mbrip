@@ -5,7 +5,8 @@ import os.path
 class Lame:
 	path = '/usr/bin/lame'
 
-	def __init__(self):
+	def __init__(self, path=None):
+		self.path = path or self.path
 		if not os.path.exists(self.path):
 			print "Error: Binary %s does not exist." % self.path
 			sys.exit(2)

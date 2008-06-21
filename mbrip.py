@@ -1,9 +1,30 @@
 #! /usr/bin/env python
 import sys
 import mbrip.controller as controller
-import mbrip.ripper as ripper
-import mbrip.encoder as encoder
-import mbrip.tagger as tagger
+import mbrip.formatter
+import mbrip.ripper
+import mbrip.encoder
+import mbrip.tagger
+
+
+#
+# Configuration.
+#
+ripper = mbrip.ripper.CdParanoia('/usr/bin/cdparanoia')
+
+encoder = mbrip.encoder.Lame('/usr/bin/lame')
+
+fileNameFormatter = mbrip.formatter.Formatter(
+	pattern='${num} - ${artist} - ${title}',
+	whitelist=None,
+	rewriteMap={ '/': '', '\\': '' },
+)
+
+tagger = mbrip.tagger.EyeD3()
+
+
+# Nothing to change from here on.
+#
 
 try:
 	import musicbrainz2
@@ -13,9 +34,8 @@ except:
 
 
 ctrl = controller.Controller(
-	ripper=ripper.CdParanoia(),
-	encoder=encoder.Lame(),
-	tagger=tagger.EyeD3(),
+	fileNameFormatter=fileNameFormatter,
+	ripper=ripper, encoder=encoder, tagger=tagger,
 )
 
 ctrl.run()

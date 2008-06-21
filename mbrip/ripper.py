@@ -6,10 +6,12 @@ import os.path
 class CdParanoia:
 	path = '/usr/bin/cdparanoia'
 
-	def __init__(self):
+	def __init__(self, path=None):
+		self.path = path or self.path
 		if not os.path.exists(self.path):
 			print "Error: Binary %s does not exist." % self.path
 			sys.exit(2)
+
 
 	def ripTracks(self, todoList):
 		for entry in todoList:

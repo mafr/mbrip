@@ -18,7 +18,7 @@ class State:
 class Controller:
 	"""A state machine for handling user interaction."""
 
-	def __init__(self, ripper=None, encoder=None, tagger=None):
+	def __init__(self, fileNameFormatter, ripper, encoder, tagger):
 		self.releaseToRip = None
 		self.stateTable = {
 			State.SELECT_RELEASE: self.selectReleaseHandler,
@@ -26,6 +26,7 @@ class Controller:
 			State.SELECT_TRACKS: self.selectTracksHandler,
 			State.RIP_TRACKS: self.ripTracksHandler,
 		}
+		self.fileNameFormatter = fileNameFormatter
 		self.ripper = ripper
 		self.encoder = encoder
 		self.tagger = tagger
@@ -136,7 +137,8 @@ class Controller:
 
 
 	def ripTracksHandler(self):
-		todo = createTodoList(self.releaseToRip, self.tracksToRip)
+		todo = createTodoList(self.releaseToRip, self.tracksToRip,
+			self.fileNameFormatter)
 
 		self.ripper.ripTracks(todo)
 		self.encoder.encodeTracks(todo, self.tagger)
