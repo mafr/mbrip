@@ -2,15 +2,16 @@ import sys
 import os
 import os.path
 
+from mbrip.utils import errQuit
+
 
 class CdParanoia:
-	path = '/usr/bin/cdparanoia'
+	PATH = '/usr/bin/cdparanoia'
 
-	def __init__(self, path=None):
-		self.path = path or self.path
+	def __init__(self, path=PATH):
+		self.path = path
 		if not os.path.exists(self.path):
-			print "Error: Binary %s does not exist." % self.path
-			sys.exit(2)
+			errQuit("Error: Binary %s does not exist." % self.path)
 
 
 	def ripTracks(self, todoList):
@@ -31,16 +32,13 @@ class CdParanoia:
 				'cdparanoia', str(todoEntry['num']), tmpfile)
 
 			if ret != 0:
-				print "error executing cdparanoia"
-				sys.exit(1)
+				errQuit("error executing cdparanoia")
 
 			os.rename(tmpfile, wavfile)
 
 		except KeyboardInterrupt:
-			print
-			print "cancelled on user request"
 			os.unlink(tmpfile)
-			sys.exit(1)
+			errQuit("\ncancelled on user request")
 
 
 # EOF

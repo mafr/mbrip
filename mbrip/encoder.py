@@ -2,18 +2,25 @@ import sys
 import os
 import os.path
 
-class Lame:
-	path = '/usr/bin/lame'
+from mbrip.utils import errQuit
 
-	def __init__(self, path=None):
-		self.path = path or self.path
+
+class Lame:
+	"""A lame-based MP3 encoder."""
+
+	PATH = '/usr/bin/lame'
+
+	def __init__(self, path=PATH, *args):
+		self.path = path
+		self.args = args
 		if not os.path.exists(self.path):
-			print "Error: Binary %s does not exist." % self.path
-			sys.exit(2)
+			errQuit("Error: Binary %s does not exist." % self.path)
+
 
 	def encodeTracks(self, todoList, tagger):
 		for entry in todoList:
 			self.encodeTrack(entry, tagger)
+
 
 	def encodeTrack(self, todoEntry, tagger):
 		wavfile = todoEntry['wavfile']
@@ -26,12 +33,14 @@ class Lame:
 
 
 		try:
-			ret = os.spawnl(os.P_WAIT, self.path,
-				'lame', wavfile, tmpfile)
+			args = [os.P_WAIT, self.path, 'lame']
+			args += self.args
+			args += [wavfile, tmpfile]
+
+			ret = os.spawnl(*args)
 
 			if ret != 0:
-				print "error executing lame"
-				sys.exit(1)
+				errQuit("error executing lame")
 
 			tagger.tagTrack(todoEntry)
 
@@ -39,9 +48,8 @@ class Lame:
 			os.unlink(wavfile)
 
 		except KeyboardInterrupt:
-			print
-			print "cancelled on user request"
 			os.unlink(tmpfile)
-			sys.exit(1)
+			print
+			errQuit("\ncancelled on user request")
 
 # EOF

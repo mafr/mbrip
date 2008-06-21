@@ -1,13 +1,15 @@
 import sys
+from mbrip.utils import errQuit
+
 import musicbrainz2.disc as mbdisc
 import musicbrainz2.webservice as mbws
+
 
 def readDisc():
 	try:
 		return mbdisc.readDisc()
 	except mbdisc.DiscError, e:
-		print "Error:", e
-		sys.exit(1)
+		errQuit("Error: " + e)
 
 
 def getMatchingReleases(disc):
@@ -22,8 +24,7 @@ def getMatchingReleases(disc):
 		filter = mbws.ReleaseFilter(discId=disc.id)
 		results = query.getReleases(filter)
 	except mbws.WebServiceError, e:
-		print "Error:", e
-		sys.exit(2)
+		errQuit("Error: " + e)
 
 	return results
 
@@ -39,8 +40,7 @@ def loadRelease(releaseId):
 			releaseEvents=True)
 		release = query.getReleaseById(releaseId, inc)
 	except mbws.WebServiceError, e:
-		print "Error:", e
-		sys.exit(2)
+		errQuit("Error: " + e)
 
 	return release
 

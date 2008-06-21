@@ -3,6 +3,7 @@ from musicbrainz2.disc import getSubmissionUrl
 from mbrip.ui import Menu, queryUser, parseSpan
 from mbrip.webservice import readDisc, getMatchingReleases, loadRelease
 from mbrip.todo import createTodoList
+from mbrip.utils import errQuit
 import mbrip.ripper
 import mbrip.encoder
 import mbrip.tagger
@@ -45,8 +46,7 @@ class Controller:
 		results = getMatchingReleases(disc)
 
 		if len(results) == 0:
-			print "no disc found"
-			sys.exit(2);
+			errQuit("no disc found")
 
 		menu = Menu('1', 'Please select a release to rip:')
 

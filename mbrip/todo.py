@@ -18,8 +18,7 @@ def createTodoList(release, trackList, fileNameFormatter):
 			metaDict = createMetaDict(i, release, track)
 			fileBase = fileNameFormatter.format(metaDict)
 		except KeyError, e:
-			print "Error: invalid key in file name pattern:", e
-			sys.exit(1)
+			errQuit("Error: invalid key in file name pattern: " + e)
 
 		entry = {
 			'num':		i,

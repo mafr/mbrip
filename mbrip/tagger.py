@@ -1,6 +1,9 @@
 import sys
+from mbrip.utils import errQuit
+
 from musicbrainz2.utils import extractUuid, extractFragment
 from musicbrainz2.model import NS_MMD_1
+
 
 # Keys for the UFID and TXXX frames
 #
@@ -20,8 +23,7 @@ class EyeD3:
 		try:
 			import eyeD3
 		except ImportError:
-			print "Error: package eyeD3 not found."
-			sys.exit(2)
+			errQuit("Error: package eyeD3 not found.")
 
 	def tagTrack(self, todoEntry):
 		import eyeD3
