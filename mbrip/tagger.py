@@ -1,5 +1,6 @@
 import sys
 from mbrip.utils import errQuit
+import mutagen.id3 as id3
 
 from musicbrainz2.utils import extractUuid, extractFragment
 from musicbrainz2.model import NS_MMD_1
@@ -77,5 +78,51 @@ class EyeD3:
 			tag.setDate(event.date[0:4])
 
 		tag.update(eyeD3.ID3_V2_3)
+
+
+ENC_UTF8 = 3
+
+class MutagenId3:
+	def __init__(self):
+		pass
+
+	def tagTrack(self, todoEntry):
+		fileName = todoEntry['mp3file'] + '.tmp'
+		release = todoEntry['release']
+		track = todoEntry['track']
+		trackNum = todoEntry['num']
+
+		audio = id3.ID3(fileName)
+
+		if track.artist is None:
+			audio.add(id3.TPE1(encoding=ENC_UTF8, text=release.artist.name))
+		else:
+			audio.add(id3.TPE1(encoding=ENC_UTF8, text=track.artist.name))
+
+		audio.add(id3.TIT2(encoding=ENC_UTF8, text=track.title))
+		audio.add(id3.TALB(encoding=ENC_UTF8, text=release.title))
+		#audio.add(id3.TRCK(text='%d/%d' % (trackNum, len(release.tracks))))
+		audio.add(id3.TRCK(text='%d' % (trackNum, )))
+
+		audio.save()
+
+
+if __name__ == '__main__':
+	from musicbrainz2.model import Artist, Release, Track
+
+	artist = Artist(name=u'Tori Amos')
+	release = Release(title=u'Little Earthquakes')
+	release.artist = artist
+	track = Track(title='Tear In Your Hand')
+
+	todoEntry = {
+		'num':		7,
+		'mp3file':	'Tear_In_Your_Hand.mp3',
+		'release':	release,
+		'track':	track,
+	}
+
+	m = MutagenId3()
+	m.tagTrack(todoEntry)
 
 # EOF
