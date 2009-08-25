@@ -9,7 +9,7 @@ def readDisc():
 	try:
 		return mbdisc.readDisc()
 	except mbdisc.DiscError, e:
-		errQuit("Error: " + e)
+		errQuit("Error: Cannot read disc: " + str(e))
 
 
 def getMatchingReleases(disc):

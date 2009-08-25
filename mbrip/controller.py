@@ -50,11 +50,9 @@ class Controller:
 
 		menu = Menu('1', 'Please select a release to rip:')
 
-		i = 1
-		for r in results:
+		for i, r in enumerate(results, 1):
 			menu.addChoice(str(i), '%s - %s' % (
 				r.release.artist.name, r.release.title))
-			i += 1
 
 		menu.addChoice(None, None)
 		menu.addChoice('n', 'None of those, show submission URL.')
@@ -90,8 +88,7 @@ class Controller:
 		print "%s - %s" % (
 			release.artist.getUniqueName(), release.title)
 
-		i = 1
-		for t in release.tracks:
+		for i, t in enumerate(release.tracks, 1):
 			if isSingleArtist:
 				title = t.title
 			else:
@@ -99,7 +96,6 @@ class Controller:
 
 			(min, sec) = t.getDurationSplit()
 			print " %2d. %s (%d:%02d)" % (i, title, min, sec)
-			i+=1
 
 
 		menu = Menu('r', 'Please select:')
