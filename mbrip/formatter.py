@@ -1,7 +1,7 @@
 import string
 import re
 
-class Formatter:
+class Formatter(object):
 	"""Format a file name.
 
 	This formatter basically consists of two parts:
@@ -9,9 +9,6 @@ class Formatter:
 	  1. Remove all characters which are not in the whitelist.
 	  2. Rewrite the characters in the string based on a rewrite map.
 	"""
-	SHELL_FRIENDLY_WHITELIST = ' -._' + string.letters + string.digits
-	SHELL_FRIENDLY_REWRITE_MAP = { ' ': '_', '/': '' }
-
 	def __init__(self, pattern, whitelist=None, rewriteMap={ }):
 		self._pattern = pattern
 		self._whitelist = whitelist
@@ -51,6 +48,17 @@ class Formatter:
 		return string.Template(self._pattern).substitute(metaDict)
 
 
+class ShellFriendlyFormatter(Formatter):
+	"""Like Formatter, but with shell-friendly whitelist and rewrite map."""
+
+	WHITELIST = ' -._' + string.letters + string.digits
+	REWRITE_MAP = { ' ': '_', '/': '' }
+
+	def __init__(self, pattern, whitelist=WHITELIST, rewriteMap=REWRITE_MAP):
+		super(ShellFriendlyFormatter, self).__init__(
+			pattern, whitelist, rewriteMap)
+
+
 if __name__ == '__main__':
 	metaDict = {
 		'num': '%02d' % 7,
@@ -58,9 +66,7 @@ if __name__ == '__main__':
 		'title': 'Tear in Your Hand',
 	}
 
-	f = Formatter('${num} - ${artist} - ${title}',
-		whitelist=Formatter.SHELL_FRIENDLY_WHITELIST,
-		rewriteMap=Formatter.SHELL_FRIENDLY_REWRITE_MAP)
+	f = ShellFriendlyFormatter('${num} - ${artist} - ${title}')
 
 	print f.format(metaDict)
 

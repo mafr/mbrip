@@ -3,7 +3,7 @@ import sys
 from mbrip.controller import Controller
 from mbrip.ripper import CdParanoia
 from mbrip.encoder import Lame
-from mbrip.formatter import Formatter
+from mbrip.formatter import ShellFriendlyFormatter
 from mbrip.tagger import EyeD3
 from mbrip.utils import errQuit
 
@@ -15,10 +15,8 @@ ripper = CdParanoia('/usr/bin/cdparanoia')
 
 encoder = Lame('/usr/bin/lame', '--r3mix')
 
-fileNameFormatter = Formatter(
-	pattern='${num} - ${artist} - ${title}',
-	whitelist=None,
-	rewriteMap={ '/': '', '\\': '' },
+fileNameFormatter = ShellFriendlyFormatter(
+	pattern='${num}_-_${artist}_-_${title}',
 )
 
 tagger = EyeD3()
