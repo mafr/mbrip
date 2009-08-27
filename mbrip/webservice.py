@@ -1,8 +1,11 @@
 import sys
 from mbrip.utils import errQuit
 
-import musicbrainz2.disc as mbdisc
-import musicbrainz2.webservice as mbws
+try:
+	import musicbrainz2.disc as mbdisc
+	import musicbrainz2.webservice as mbws
+except ImportError:
+	errQuit("Error: Please install the python-musicbrainz2 package.")
 
 
 def readDisc():
@@ -24,7 +27,7 @@ def getMatchingReleases(disc):
 		filter = mbws.ReleaseFilter(discId=disc.id)
 		results = query.getReleases(filter)
 	except mbws.WebServiceError, e:
-		errQuit("Error: " + e)
+		errQuit("Error: " + str(e))
 
 	return results
 
@@ -40,7 +43,7 @@ def loadRelease(releaseId):
 			releaseEvents=True)
 		release = query.getReleaseById(releaseId, inc)
 	except mbws.WebServiceError, e:
-		errQuit("Error: " + e)
+		errQuit("Error: " + str(e))
 
 	return release
 

@@ -1,6 +1,5 @@
 import sys
 from mbrip.utils import errQuit
-import mutagen.id3 as id3
 
 from musicbrainz2.utils import extractUuid, extractFragment
 from musicbrainz2.model import NS_MMD_1
@@ -84,7 +83,10 @@ ENC_UTF8 = 3
 
 class MutagenId3:
 	def __init__(self):
-		pass
+		try:
+			import mutagen.id3 as id3
+		except ImportError:
+			errQuit("Error: package eyeD3 not found.")
 
 	def tagTrack(self, todoEntry):
 		fileName = todoEntry['mp3file'] + '.tmp'

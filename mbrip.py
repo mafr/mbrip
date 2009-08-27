@@ -1,20 +1,19 @@
 #! /usr/bin/env python
 import sys
-import mbrip.controller as controller
-import mbrip.ripper
-import mbrip.encoder 
-import mbrip.tagger
-
+from mbrip.controller import Controller
+from mbrip.ripper import CdParanoia
+from mbrip.encoder import Lame
 from mbrip.formatter import Formatter
+from mbrip.tagger import EyeD3
 from mbrip.utils import errQuit
 
 
 #
 # Configuration.
 #
-ripper = mbrip.ripper.CdParanoia('/usr/bin/cdparanoia')
+ripper = CdParanoia('/usr/bin/cdparanoia')
 
-encoder = mbrip.encoder.Lame('/usr/bin/lame', '--r3mix')
+encoder = Lame('/usr/bin/lame', '--r3mix')
 
 fileNameFormatter = Formatter(
 	pattern='${num} - ${artist} - ${title}',
@@ -22,23 +21,20 @@ fileNameFormatter = Formatter(
 	rewriteMap={ '/': '', '\\': '' },
 )
 
-tagger = mbrip.tagger.EyeD3()
+tagger = EyeD3()
 
 
 # Nothing to change from here on.
 #
 
-try:
-	import musicbrainz2
-except:
-	errQuit("Error: please install the python-musicbrainz2 package.")
-
-
-ctrl = controller.Controller(
+ctrl = Controller(
 	fileNameFormatter=fileNameFormatter,
 	ripper=ripper, encoder=encoder, tagger=tagger,
 )
 
-ctrl.run()
+try:
+	ctrl.run()
+except KeyboardInterrupt:
+	errQuit("\nInterrupted on by user. Exiting.")
 
 # EOF
