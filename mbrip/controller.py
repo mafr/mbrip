@@ -17,7 +17,12 @@ class State:
 	QUIT = 5
 
 class Controller:
-	"""A state machine for handling user interaction."""
+	"""A state machine for handling user interaction.
+
+	Each state represents one screen. We associate a handler function
+	with each state which implements the transition to the next state
+	based on user input.
+	"""
 
 	def __init__(self, fileNameFormatter, ripper, encoder, tagger):
 		self.releaseToRip = None

@@ -28,7 +28,7 @@ class Lame:
 		tmpfile = mp3file + '.tmp'
 
 		if os.path.exists(mp3file):
-			print "not encoding track %d again" % todoEntry['num']
+			print "Track %s has already been encoded. Skipping." % todoEntry['num']
 			return
 
 
@@ -49,7 +49,6 @@ class Lame:
 
 		except KeyboardInterrupt:
 			os.unlink(tmpfile)
-			print
 			errQuit("\ncancelled on user request")
 
 # EOF

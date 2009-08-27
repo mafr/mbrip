@@ -36,9 +36,7 @@ def parseSpan(span):
 		for i in range(start, stop+1):
 			elem[i] = 1
 
-	l = elem.keys()
-	l.sort(lambda a, b: cmp(a, b))
-	return l
+	return sorted(elem.keys(), lambda a, b: cmp(a, b))
 
 
 class Menu:

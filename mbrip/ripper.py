@@ -24,7 +24,7 @@ class CdParanoia:
 		tmpfile = wavfile + '.tmp'
 
 		if os.path.exists(wavfile) or os.path.exists(mp3file):
-			print "not ripping track %d again" % todoEntry['num']
+			print "Track %s has already been ripped. Skipping." % todoEntry['num']
 			return
 
 		try:
