@@ -34,6 +34,9 @@ class Formatter(object):
 
 
 	def rewritePathComponent(self, name):
+		if name is None:
+			return ''
+
 		if self._whitelist is not None:
 			name = self.applyWhitelist(name, self._whitelist)
 
@@ -42,10 +45,12 @@ class Formatter(object):
 		return name
 
 	def format(self, metaDict):
-		for key in metaDict:
-			metaDict[key] = self.rewritePathComponent(metaDict[key])
+		# We don't want to modify metaDict, so we work on a copy.
+		d = dict(metaDict)
+		for key in d:
+			d[key] = self.rewritePathComponent(d[key])
 
-		return string.Template(self._pattern).substitute(metaDict)
+		return string.Template(self._pattern).substitute(d)
 
 
 class ShellFriendlyFormatter(Formatter):

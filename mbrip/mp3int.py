@@ -1,6 +1,7 @@
 import os
 import shutil
 import mutagen.id3 as mid3
+from mbrip.metadata import Id3Tag
 from mbrip.formatter import ShellFriendlyFormatter
 
 
@@ -26,15 +27,18 @@ def integrate_file(srcfile, opts):
 def load_metadata(srcfile):
 	# TODO 1
 	# 1. Open and read tag. exit if no tag or tag incomplete.
-	# 2. Work out file type (album, maxi, etc.). How?
+	tag = Id3Tag()
+	tag.load(srcfile)
 
-	return { 'artist': 'Tori Amos', 'title': 'Tear in Your Hand' }
+	# 2. Work out file type (album, maxi, etc.). How?
+	return tag
 
 
 def build_filename(srcfile, metadata, opts):
 	root, ext = os.path.splitext(srcfile)
 
-	formatter = ShellFriendlyFormatter('${artist}/${title}')
+	# TODO 3: pattern should be in opts!
+	formatter = ShellFriendlyFormatter('${artist}/${track}_${title}')
 	filename = formatter.format(metadata) + ext
 
 	return os.path.join(opts.root_dir, filename)
