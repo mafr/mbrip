@@ -1,38 +1,7 @@
-#! /usr/bin/env python
-import sys
 import os
-import optparse
+import shutil
 import mutagen.id3 as mid3
-
-
-repositoryRoot = '/tmp'
-
-
-
-def integrate_file(srcfile, opts):
-	print 'Creating TODO (from %s) ...' % (srcfile, )
-
-	print opts.move
-
-	# 1. Open and read tag. exit if no tag or tag incomplete.
-	# 2. Work out file type (album, maxi, etc.). How?
-	# 3. Create a file name using mbrip's ShellFriendlyFormatter
-
-	# TODO: obviously
-	filename = 'Tori_Amos/albums/Whatever.mp3'
-
-	# 4. Figure out target filename
-	destfile = os.path.join(opts.root_dir, filename)
-
-	# 5. Create the target directory
-	destdir = os.path.dirname(destfile)
-	os.makedirs(destdir)
-
-	# 6. Copy/move the file there if it doesn't exist yet
-
-	# 7. Set integration date??
-	# 8. Fix permissions??
-	pass
+from mbrip.formatter import ShellFriendlyFormatter
 
 
 def integrate_files(filenames, opts):
@@ -40,42 +9,55 @@ def integrate_files(filenames, opts):
 		integrate_file(f, opts)
 
 
+def integrate_file(srcfile, opts):
+	metadata = load_metadata(srcfile)
 
-op = optparse.OptionParser('usage: %prog [options] filenames...')
+	destfile = build_filename(srcfile, metadata, opts)
 
-op.add_option('-r', '--root-dir', default='',
-	help="Files are generated relative to this (default: '')", metavar="DIR")
-op.add_option('-m', '--move', action='store_true',
-	help="Move the file, don't copy")
-op.add_option('-f', '--force', action='store_true',
-	help='Overwrite existing files')
-op.add_option('-q', '--quiet', action='store_true',
-	help='No status output')
+	create_dir_for_file(destfile)
 
-opts, args = op.parse_args()
+	copy_or_move(srcfile, destfile, opts)
 
-
-try:
-	integrate_files(args, opts)
-#except SomeError, e:
-#	pass
-except KeyboardInterrupt:
-	pass
+	# TODO 2
+	# 7. Set integration date??
+	# 8. Fix permissions??
 
 
-filename = 'Tori_Amos/albums/Whatever.mp3'
+def load_metadata(srcfile):
+	# TODO 1
+	# 1. Open and read tag. exit if no tag or tag incomplete.
+	# 2. Work out file type (album, maxi, etc.). How?
 
-destfile = os.path.join(repositoryRoot, filename)
-destdir = os.path.dirname(destfile)
-
-if os.path.exists(destfile):
-	print 'error: file already exists'
-	sys.exit(1)
-
-if not os.path.isdir(destdir):
-	print 'creating', destdir
-	os.makedirs(destdir)
+	return { 'artist': 'Tori Amos', 'title': 'Tear in Your Hand' }
 
 
-print destfile
-print destdir
+def build_filename(srcfile, metadata, opts):
+	root, ext = os.path.splitext(srcfile)
+
+	formatter = ShellFriendlyFormatter('${artist}/${title}')
+	filename = formatter.format(metadata) + ext
+
+	return os.path.join(opts.root_dir, filename)
+
+
+def create_dir_for_file(filename):
+	destdir = os.path.dirname(filename)
+
+	if not os.path.exists(destdir):
+		os.makedirs(destdir)
+
+
+def copy_or_move(srcfile, destfile, opts):
+	if os.path.exists(destfile) and not opts.force:
+		print 'Skipping, file %s already exists' % (destfile, )
+		return
+
+	if not opts.quiet:
+		print 'Creating %s ...' % (destfile, )
+
+	if opts.move:
+		shutil.move(srcfile, destfile)
+	else:
+		shutil.copy(srcfile, destfile)
+
+# EOF
