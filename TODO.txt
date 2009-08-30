@@ -1,7 +1,7 @@
 Things to be done, in no particular order:
 
  * Use exceptions and proper handling instead of errQuit
- * Use mutagen instead of eyeD3.
+ * Use mutagen instead of eyeD3. Then set TSOP for artist sortname.
  * Write id3v1 tags, too.
  * Move configuration to a configuration file.
 
