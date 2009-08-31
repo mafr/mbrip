@@ -3,6 +3,7 @@ import sys
 import os
 import optparse
 import mbrip
+from mbrip.utils import errQuit, RecoverableError, FatalError
 from mbrip.mp3int import integrate_files
 
 
@@ -29,8 +30,8 @@ opts, args = op.parse_args()
 
 try:
 	integrate_files(args, opts)
-#except SomeError, e:
-#	pass
+except (RecoverableError, FatalError) as e:
+	errQuit(str(e))
 except KeyboardInterrupt:
 	pass
 

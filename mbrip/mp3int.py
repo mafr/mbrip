@@ -1,13 +1,17 @@
 import os
 import shutil
 import mutagen.id3 as mid3
+from mbrip.utils import RecoverableError, FatalError, errLog
 from mbrip.metadata import Id3Tag
 from mbrip.formatter import ShellFriendlyFormatter
 
 
 def integrate_files(filenames, opts):
 	for f in filenames:
-		integrate_file(f, opts)
+		try:
+			integrate_file(f, opts)
+		except RecoverableError as e:
+			errLog(str(e))
 
 
 def integrate_file(srcfile, opts):
@@ -27,11 +31,15 @@ def integrate_file(srcfile, opts):
 def load_metadata(srcfile):
 	# TODO 1
 	# 1. Open and read tag. exit if no tag or tag incomplete.
-	tag = Id3Tag()
-	tag.load(srcfile)
+	try:
+		tag = Id3Tag()
+		tag.load(srcfile)
 
-	# 2. Work out file type (album, maxi, etc.). How?
-	return tag
+		# 2. Work out file type (album, maxi, etc.). How?
+		return tag
+	except IOError as e:
+		raise RecoverableError(
+			'Cannot read file %s: %s' % (e.filename, e.strerror))
 
 
 def build_filename(srcfile, metadata, opts):
@@ -48,20 +56,28 @@ def create_dir_for_file(filename):
 	destdir = os.path.dirname(filename)
 
 	if not os.path.exists(destdir):
-		os.makedirs(destdir)
+		try:
+				os.makedirs(destdir)
+		except (IOError, OSError) as e:
+				raise RecoverableError(
+					'Cannot create directory %s: %s' % (destdir, e.strerror))
 
 
 def copy_or_move(srcfile, destfile, opts):
 	if os.path.exists(destfile) and not opts.force:
-		print 'Skipping, file %s already exists' % (destfile, )
-		return
+		raise RecoverableError(
+			'Skipping, file %s already exists' % (destfile, ))
 
 	if not opts.quiet:
 		print 'Creating %s ...' % (destfile, )
 
-	if opts.move:
-		shutil.move(srcfile, destfile)
-	else:
-		shutil.copy(srcfile, destfile)
+	try:
+			if opts.move:
+				shutil.move(srcfile, destfile)
+			else:
+				shutil.copy(srcfile, destfile)
+	except (OSError, IOError) as e:
+		raise RecoverableError(
+			'Cannot create file %s: %s' % (destfile, e.strerror))
 
 # EOF
