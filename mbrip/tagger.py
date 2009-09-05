@@ -65,7 +65,7 @@ class EyeD3:
 			tag.addUserTextFrame(ARTIST_ID,
 				extractUuid(release.artist.id))
 		else:
-			tag.addUserTextFrame(ARTIST_ID, extractUuid(artist.id))
+			tag.addUserTextFrame(ARTIST_ID, extractUuid(track.artist.id))
 
 		tag.addUserTextFrame(ALBUM_ID, extractUuid(release.id))
 		tag.addUserTextFrame(ALBUM_ARTIST_ID,
