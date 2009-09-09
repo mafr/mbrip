@@ -45,8 +45,7 @@ def load_metadata(srcfile):
 def build_filename(srcfile, metadata, opts):
 	root, ext = os.path.splitext(srcfile)
 
-	# TODO 3: pattern should be in opts!
-	formatter = ShellFriendlyFormatter('${artist}/${track}_${title}')
+	formatter = ShellFriendlyFormatter(opts.pattern)
 	filename = formatter.format(metadata) + ext
 
 	return os.path.join(opts.root_dir, filename)

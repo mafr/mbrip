@@ -40,7 +40,8 @@ class Id3Tag(collections.Mapping):
 		if key in id3:
 			value = id3[key][0]
 			if key == 'TRCK':
-				return value.split('/')[0]
+				num = value.split('/')[0]
+				return u'%02d' % int(num)
 			else:
 				return value
 		else:
@@ -53,8 +54,9 @@ class Id3Tag(collections.Mapping):
 # TODO: proper testing required!
 if __name__ == '__main__':
 	f = Id3Tag()
-	f.load('01 - Sarah Slean - Pilgrim.mp3')
+	f.load('03_-_Kind_Generous.mp3')
 
 	print repr(f['title'])
+	print repr(f['track'])
 
 # EOF
