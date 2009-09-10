@@ -11,7 +11,7 @@ setup_args = {
 	'url':		'http://mafr.de/',
 	'license':	'GPL',
 	'packages':	[ 'mbrip' ],
-	'scripts':	[ 'bin/mbrip' ],
+	'scripts':	[ 'bin/mbrip', 'bin/mp3int' ],
 }
 
 setup(**setup_args)
