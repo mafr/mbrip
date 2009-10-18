@@ -102,7 +102,8 @@ class Controller:
 			if isSingleArtist:
 				title = t.title
 			else:
-				title = t.artist.name + ' - ' +  t.title
+				trackArtist = t.artist if t.artist else release.artist
+				title = trackArtist.name + ' - ' +  t.title
 
 			(min, sec) = t.getDurationSplit()
 			print " %2d. %s (%d:%02d)" % (i, title, min, sec)
