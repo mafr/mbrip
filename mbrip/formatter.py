@@ -1,6 +1,12 @@
 import string
 import re
 
+
+#
+# TODO:
+#  * provide a hook to post/preprocess path components
+#  * prefix applyWhitelist etc. with underscore to mark them as private
+#
 class Formatter(object):
 	"""Format a file name.
 
