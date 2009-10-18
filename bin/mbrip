@@ -21,6 +21,8 @@ fileNameFormatter = ShellFriendlyFormatter(
 
 tagger = EyeD3()
 
+preselectedReleaseId = sys.argv[1] if len(sys.argv) > 1 else None
+
 
 # Nothing to change from here on.
 #
@@ -28,6 +30,7 @@ tagger = EyeD3()
 ctrl = Controller(
 	fileNameFormatter=fileNameFormatter,
 	ripper=ripper, encoder=encoder, tagger=tagger,
+    preselectedReleaseId=preselectedReleaseId
 )
 
 try:

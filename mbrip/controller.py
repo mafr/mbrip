@@ -24,7 +24,9 @@ class Controller:
 	based on user input.
 	"""
 
-	def __init__(self, fileNameFormatter, ripper, encoder, tagger):
+	def __init__(self, fileNameFormatter, ripper, encoder, tagger,
+            preselectedReleaseId=None):
+		self.preselectedReleaseId = preselectedReleaseId
 		self.releaseToRip = None
 		self.stateTable = {
 			State.SELECT_RELEASE: self.selectReleaseHandler,
@@ -45,35 +47,38 @@ class Controller:
 			
 
 	def selectReleaseHandler(self):
-		disc = readDisc()
+		if self.preselectedReleaseId:
+			disc = None
+			results = [ loadRelease(self.preselectedReleaseId) ]
+		else:
+			disc = readDisc()
+			results = getMatchingReleases(disc)
 
-		# query the web service to get the matching tracks
-		results = getMatchingReleases(disc)
-
-		if len(results) == 0:
-			errQuit("no disc found")
+			if len(results) == 0:
+				errQuit("no disc found")
 
 		menu = Menu('1', 'Please select a release to rip:')
 
 		for i, r in enumerate(results, 1):
 			menu.addChoice(str(i), '%s - %s' % (
-				r.release.artist.name, r.release.title))
+				r.artist.name, r.title))
 
 		menu.addChoice(None, None)
-		menu.addChoice('n', 'None of those, show submission URL.')
+		if disc:
+			menu.addChoice('n', 'None of those, show submission URL.')
 		menu.addChoice('q', 'Quit')
 
 		choice = menu.showMenu()
 
 		if choice == 'q':
 			return State.QUIT
-		elif choice == 'n':
+		elif disc and choice == 'n':
 			print
 			print "Use this URL to submit the disc to MusicBrainz:"
 			print " ", getSubmissionUrl(disc)
 			return State.QUIT
 		else:
-			self.releaseToRip = results[int(choice)-1].release
+			self.releaseToRip = results[int(choice)-1]
 			return State.SHOW_RELEASE
 
 		assert( False )

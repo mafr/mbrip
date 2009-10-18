@@ -29,7 +29,7 @@ def getMatchingReleases(disc):
 	except mbws.WebServiceError, e:
 		errQuit("Error: " + str(e))
 
-	return results
+	return [r.release for r in results]
 
 
 def loadRelease(releaseId):

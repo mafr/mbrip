@@ -4,7 +4,7 @@ import sys
 def errLog(msg):
 	print >>sys.stderr, msg
 
-def errQuit(message):
+def errQuit(msg):
 	print >>sys.stderr, msg
 	sys.exit(1)
 
