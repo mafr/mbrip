@@ -4,6 +4,7 @@ from mbrip.ui import Menu, queryUser, parseSpan
 from mbrip.webservice import readDisc, getMatchingReleases, loadRelease
 from mbrip.todo import createTodoList
 from mbrip.utils import errQuit
+from mbrip.coverdownloader import download_cover
 import mbrip.ripper
 import mbrip.encoder
 import mbrip.tagger
@@ -144,6 +145,8 @@ class Controller:
 
 
 	def ripTracksHandler(self):
+		download_cover(self.releaseToRip)
+
 		todo = createTodoList(self.releaseToRip, self.tracksToRip,
 			self.fileNameFormatter)
 
