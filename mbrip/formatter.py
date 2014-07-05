@@ -5,7 +5,6 @@ import re
 #
 # TODO:
 #  * provide a hook to post/preprocess path components
-#  * prefix applyWhitelist etc. with underscore to mark them as private
 #
 class Formatter(object):
 	"""Format a file name.
@@ -20,49 +19,29 @@ class Formatter(object):
 		self._whitelist = whitelist
 		self._rewriteMap = rewriteMap
 
-	def applyWhitelist(self, name, whitelist):
-		"""Return the input string, only keeping the allowed chars."""
-		allowed = dict( map(lambda x: (x, True), whitelist) )
+	def _applyWhitelist(self, name):
+		if self._whitelist is None:
+			return name
+		else:
+			return (x for x in name if x in self._whitelist)
 
-		tmp = ''
-		for c in name:
-			if c in allowed:
-				tmp += c
+	def _rewriteChars(self, name):
+		return (self._rewriteMap.get(x, x) for x in name)
 
-		return tmp
-
-
-	def rewriteChars(self, name, rewriteMap={ }):
-		tmp = ''
-		for c in name:
-			tmp += rewriteMap.get(c, c)
-		return tmp
-
-
-	def rewritePathComponent(self, name):
+	def _sanitize(self, name):
 		if name is None:
 			return ''
-
-		if self._whitelist is not None:
-			name = self.applyWhitelist(name, self._whitelist)
-
-		name = self.rewriteChars(name, self._rewriteMap)
-
-		return name
+		return ''.join(self._rewriteChars(self._applyWhitelist(name)))
 
 	def format(self, metaDict):
-		# We don't want to modify metaDict, so we work on a copy.
-		d = dict(metaDict)
-		for key in d:
-			d[key] = self.rewritePathComponent(d[key])
-
+		d = { k:self._sanitize(v) for k, v in metaDict.items() }
 		return string.Template(self._pattern).substitute(d)
 
 
 class ShellFriendlyFormatter(Formatter):
 	"""Like Formatter, but with shell-friendly whitelist and rewrite map."""
 
-	WHITELIST = ' -._' + string.letters + string.digits
+	WHITELIST = { x for x in ' -._' + string.letters + string.digits }
 	REWRITE_MAP = { ' ': '_', '/': '' }
 
 	def __init__(self, pattern, whitelist=WHITELIST, rewriteMap=REWRITE_MAP):
