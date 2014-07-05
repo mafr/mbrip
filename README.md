@@ -1,10 +1,11 @@
 mbrip - A MusicBrainz-Powered Command Line Audio CD Ripper
 ----------------------------------------------------------
 
-This is a pre-alpha version of a MusicBrainz based command line CD ripper
-written by Matthias Friedrich <matt@mafr.de>.
+This is a simple command line CD ripper which uses the old python-musicbrainz2
+library. The project isn't maintained anymore, but maybe it's still useful
+to someone.
 
-There are two ways to run it: The first one works without installing the
+There are two ways to run it. The first one works without installing the
 package. Put a CD into your default disc drive and run the following command:
 
   $ PYTHONPATH=. python bin/mbrip
@@ -21,4 +22,3 @@ After that, you can run the program using this command:
 
   $ mbrip
 
-EOF
