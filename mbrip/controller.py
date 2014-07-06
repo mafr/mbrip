@@ -61,8 +61,9 @@ class Controller:
 		menu = Menu('1', 'Please select a release to rip:')
 
 		for i, r in enumerate(results, 1):
-			menu.addChoice(str(i), '%s - %s' % (
-				r.artist.name, r.title))
+			label = '%s - %s [%s]' % (r.artist.name, r.title,
+				', '.join([e.country + ' ' + e.date for e in r.releaseEvents]))
+			menu.addChoice(str(i), label)
 
 		menu.addChoice(None, None)
 		if disc:
